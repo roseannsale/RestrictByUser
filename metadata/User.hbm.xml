@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping auto-import="false" >
+	<subclass name="org.openmrs.module.restrictbyuser.User" extends="org.openmrs.User" discriminator-value="not null">
+		<set name="patients" cascade="" lazy="false" table="restrictbyuser_user_patient">
+					<key>
+						<column name="user_id" />
+					</key>
+					<many-to-many class="org.openmrs.Patient">
+						<column name="patient_id" />
+					</many-to-many>
+		</set>
+	</subclass>
+</hibernate-mapping>

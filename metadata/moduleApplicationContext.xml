@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Beans to add to the current Application context definition -->
+  
+<beans>
+
+<!-- Beans to add to the current Application context task -->
+
+	<!-- URL Mappings -->
+	<bean id="restrictbyuserUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<property name="order"><value>2</value></property>
+    <property name="mappings">
+	      	<props>
+					<prop key="module/@MODULE_ID@/restrictbyuser.form">RestrictByUserFormController</prop>
+					<prop key="module/@MODULE_ID@/restrictbyuser.list">RestrictByUserListController</prop>
+		   	</props>
+	</property>
+    </bean>
+    
+  	<!-- /URL Mappings -->
+	<!-- Controllers -->
+    
+   <bean id="RestrictByUserFormController" class="@MODULE_PACKAGE@.web.controller.RestrictByUserFormController">
+		<property name="commandName"><value>user</value></property>
+		<property name="formView"><value>/module/restrictbyuser/restrictbyuserForm</value></property>
+		<property name="successView"><value>restrictbyuser.form</value></property>
+  	</bean>
+  	
+   <bean id="RestrictByUserListController" class="@MODULE_PACKAGE@.web.controller.RestrictByUserListController">
+		<property name="commandName"><value>param</value></property>
+		<property name="formView"><value>/module/restrictbyuser/restrictbyuserList</value></property>
+		<property name="successView"><value>restrictbyuser.list</value></property>
+  	</bean>
+  	
+  	<bean parent="serviceContext">
+		<property name="moduleService">
+		<list>
+			<value>org.openmrs.module.restrictbyuser.service.UserService</value>
+			<bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+				<property name="transactionManager">
+					<ref bean="transactionManager"/>
+				</property>
+				<property name="target">
+					<bean class="org.openmrs.module.restrictbyuser.impl.UserServiceImpl">
+						<property name="userDAO">
+							<bean class="org.openmrs.module.restrictbyuser.db.hibernate.HibernateUserDAO">
+								<property name="sessionFactory">
+									<ref bean="sessionFactory"/>
+								</property>
+							</bean>
+						</property>
+					</bean>
+				</property>
+				<property name="preInterceptors">
+					<list>
+						<ref bean="authorizationInterceptor" />
+					</list>
+				</property>
+				<property name="transactionAttributeSource">
+					<bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource" />
+				</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+   <!-- /Controllers -->
+	
+</beans>
